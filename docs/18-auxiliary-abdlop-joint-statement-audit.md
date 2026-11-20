@@ -1,5 +1,7 @@
 # 18 · 辅助 ABDLOP 承诺与联合提取关系审计（LB-05R）
 
+> **★LB-05S 修订说明（2026-11-20）**：用户对照 LNP22 官方 PDF 第 42–43 页发现本文 §2.2 有一处**变量定义错误**——`ŝ₁=(s₁,s₂,x)` 后又定义 `s_full=(ŝ₁,σ(ŝ₁),m̂,σ(m̂))`，把 x 和 σ(x) 塞进了 exact-norm 向量，与 Figure 10 的 s=(s₁,σ(s₁),m,σ(m))（不含 x、无 σ(x)）不一致。本轮修正：s_A=(s₁,s₂)、s_LNP=(s_A,σ(s_A),m_A,σ(m_A)) 不含 x，E_{s₂}∈R_q^{m₂×2(m₁+m₂+ℓ)}（不含 x 列）；并收紧两处安全论证（Extended-MLWE hiding 不能用 m₂'>n'；MSIS 差向量不能用未证 ‖Δs‖≤2β，须用 c̄-scaled 界）。**完整修正分析见 `docs/19-b2-exact-statement-and-security-audit.md`**。以下 §2.2、§3.2、§3.3(c) 已就地修正，其余为 LB-05R 原始记录，最终以 docs/19 为准。
+>
 > LB-05R · 任务 A / B / C / D / E。日期：2026-11-20。
 > 基线：`docs/16`（路线 A 否证）、`docs/17`（路线 B 初稿）、`decisions/LB-05-decision.md`（条件性 B）。
 > 本轮只补齐 LB-05 的三个数学缺口，不扩大到 Decider、不做 LaZer 集成。
@@ -72,7 +74,7 @@ B'   ∈ R_q^{ℓ'×m₂'},  r∈R^{m₂'},  m'∈R^{ℓ'}
 ```
 ⟨E_{s₂}s_full, E_{s₂}s_full⟩ + ⟨p, x⟩ = β² mod q,     p=(1,2,…,2^{2logβ−1},0,…,0)
 ```
-其中 `E_{s₂}s_full = s₂`，`⟨p,x⟩ = β²−‖s₂‖²`（整数，非负），`x` 二值。提升到 Z 上的条件（Thm5.3）：
+其中 `E_{s₂}s_full = s₂`，`⟨p,x⟩ = β²−‖s₂‖²`（整数，非负），`x` 二值。（★LB-05S 注：此处 s_full 是 §1.3 B1 窄版中被 E_{s₂} 选出的向量， υe=1 时即 (s₂,σ(s₂))，不含 x；B2 的 exact 向量统一改称 s_LNP=(s_A,σ(s_A),m_A,σ(m_A))，见 §2.2 修正与 docs/19 §1。）提升到 Z 上的条件（Thm5.3）：
 ```
 B^{(eq)} < q^{1/(4c^{(eq)})},
 (B^{(eq)})² + √((υe+k_bin)d)·B^{(eq)} < q,
@@ -93,25 +95,29 @@ B^{(eq)} < q^{1/(4c^{(eq)})},
 
 ### 2.2 B2 扩展版辅助承诺（用户建议方向）
 
+> **★LB-05S 修正**：本小节原稿把 x 写进 exact 向量（`s_full=(ŝ₁,σ(ŝ₁),m̂,σ(m̂))`、E_{s₂} 维度含 υe 列），与 LNP22 Figure 10 不符，已就地修正如下。**x 仍在 Ajtai 承诺槽中（物理布局不变），但不属于 exact-norm 向量 s，也无 σ(x)**。
+
 把原始 opening 变量一并放进**新承诺的 Ajtai 消息**：
 ```
-ŝ₁ = (s₁, s₂, x) ∈ R_q^{m₁+m₂+υe}        （Ajtai 消息）
-m̂  = m ∈ R_q^{ℓ'}                        （BDLOP 消息，ℓ'=ℓ）
+基础消息:  s_A = (s₁, s₂) ∈ R_q^{m₁+m₂}    （注意：s_A 不含 x）
+           m_A = m ∈ R_q^{ℓ'}                （BDLOP 消息，ℓ'=ℓ）
+二进制余量: x ∈ R_q^{υe}, υe=1（追加进 Ajtai 承诺槽，但不属于 s）
 
-t̂_A = Â₁·(s₁,s₂,x) + Â₂·r ,   Â₁∈R_q^{n'×(m₁+m₂+υe)}, Â₂∈R_q^{n'×m₂'}, r∈R^{m₂'}
-t̂_B = B̂·r + m̂ ,              B̂∈R_q^{ℓ'×m₂'}
+t̂_A = Â_s·s_A + Â_x·x + Â_r·r ,  Â₁=[Â_s Â_x]∈R_q^{n'×(m₁+m₂+υe)}, Â_r∈R_q^{n'×m₂'}, r∈R^{m₂'}
+t̂_B = B̂·r + m_A ,              B̂∈R_q^{ℓ'×m₂'}
 ```
 在同一 commit-and-prove statement 内，用 LNP22 线性接口（Eq.6）表达原始 opening：
 ```
-(R1)  [A₁  A₂  0_{n×υe}] · ŝ₁                 = t_A     （R₁·ŝ₁ + 0·m̂ = u₁, u₁=t_A）
-(R2)  [0_{ℓ×m₁}  B  0_{ℓ×υe}] · ŝ₁ + I_ℓ·m̂    = t_B     （R₁'·ŝ₁ + I_ℓ·m̂ = u₂, u₂=t_B）
+(R1)  [A₁  A₂  0_{n×υe}] · (s_A, x)          = t_A     （R₁·s_A + 0·m_A = u₁, u₁=t_A）
+(R2)  [0_{ℓ×m₁}  B  0_{ℓ×υe}] · (s_A, x) + I_ℓ·m_A = t_B
 ```
-再用 exact 选择矩阵只约束 s₂：
+再用 exact 选择矩阵只约束 s₂——**关键：exact 向量 s_LNP 不含 x、无 σ(x)**（PDF L5653/L6179；Eq.59 的 I_i(s,x) 把 x 作独立实参）：
 ```
-(R3)  s_full = (ŝ₁, σ(ŝ₁), m̂, σ(m̂)) ∈ R^{2(m₁+m₂+υe+ℓ')}
-      E_{s₂} ∈ R^{m₂×2(m₁+m₂+υe+ℓ')} 选取 ŝ₁ 中 s₂ 分量 → E_{s₂}·s_full = s₂
-      ⟨E_{s₂}s_full, E_{s₂}s_full⟩ + ⟨p,x⟩ = β² mod q,  x 由 Eq.58+Fig9 约束为二值
+(R3)  s_LNP = (s_A, σ(s_A), m_A, σ(m_A)) ∈ R^{2(m₁+m₂+ℓ)}   ← 不含 x、不含 σ(x)
+      E_{s₂} ∈ R^{m₂×2(m₁+m₂+ℓ)} 选取 s_LNP 中 s₂ 分量 → E_{s₂}·s_LNP = s₂   （不含 x 列）
+      ⟨E_{s₂}·s_LNP, E_{s₂}·s_LNP⟩ + ⟨p,x⟩ = β² mod q,  x 由 Eq.58+Fig9 约束为二值
 ```
+`[待核查 · 设计外推]` LNP22 原文 E_i∈R^{p_i×2(m₁+ℓ)}、Figure 10 中无 E_{s₂}（s₂ 只作 randomness，L1772/L1774）。把 s₂ 提升为消息、把维度从 2(m₁+ℓ) 推广到 2(m₁+m₂+ℓ) 是 B2 的结构外推，须在安全证明阶段验证 Fig5/Fig8 接口兼容性。详见 docs/19 §1.2–1.4。
 
 ### 2.3 B2 能否进同一 commit-and-prove：逐接口核查（不默认可行）
 
@@ -154,17 +160,24 @@ accepting transcript
 
 ### 3.2 差向量与实际范数上界
 
+> **★LB-05S 修正**：原稿写 `‖Δs_i‖₂≤2β_s` 并作为 MSIS 界 B 的取值，用户指出这用了未证的 exact 界。LNP22 Lemma 3.1 st.2（PDF L1544–1547）提取界是 **c̄-scaled**：`‖s̄_i·c̄‖≤2s_i√(2m_i d)`，除以 c̄ 不保范数（c̄ 只满足 ‖c̄‖∞≤2κ，PDF L792）；binding 论证（L511–521 Eq.25–27）实际乘 c̄c̄' 清分母，界为 `8η·s_i√(2m_i d)`。已就地修正如下；完整推导见 docs/19 §3.5。
+
 `[推导]` 设两个可接受 opening 的盐分别为 (s₁,s₂)、(s'₁,s'₂)，定义
 ```
 Δs₁ = s₁−s'₁,  Δs₂ = s₂−s'₂,  Δx = x−x',  Δr = r−r'
 ```
-若每个 opening 的盐范数 ≤ β_s，则**差向量上界**
+须分三种界，不能混用：
 ```
-‖Δs_i‖₂ ≤ ‖s_i‖₂ + ‖s'_i‖₂ ≤ 2β_s        (i=1,2)
-‖Δx‖₂  ≤ √υe·d   （x 二值，逐系数差∈{−1,0,1}，共 υe·d 位）
-‖Δr‖₂  ≤ 2β_r
+honest short opening（采样界，exact 但非提取器保证）:
+   ‖s₂‖₂ ≤ β_honest (≈√(m₂·d) 量级；B̃=2, LBF L2876)
+协议提取 relaxed opening（Lemma 3.1 st.2, c̄-scaled）:
+   ‖s̄_i·c̄‖₂ ≤ 2s_i√(2m_i d)     ← 只对乘积给界，非 ‖s̄_i‖
+binding 用的差向量界（乘 c̄c̄' 清分母, L511–521）:
+   ‖(s̄_i−s̄'_i)·c̄c̄'‖ 相关短量 z̄_i c̄'−z̄'_i c̄ 界为 8η·s_i√(2m_i d)
+exact 覆盖的 s₂（B2 的 (L4)(L5)）:
+   ‖s̄₂‖₂ ≤ β  无 c̄   ← exact 核心收益，但仅覆盖被 exact 关系作用的 s₂
 ```
-这是后续 MSIS 界 B 的取值依据：**B ≈ 2β_s（或 β_honest+β_ext）**，不是无条件"任意短"。
+`[推导]` 因此 MSIS 界 B 的取值依据**不是**未证的 `2β_s`，而是：若对应分量只走 relaxed 提取，B 取 c̄-scaled 上界 `8η√(…)`；若该分量被 exact 覆盖（B2 的 s₂），可取 exact β。s₁、r 未被 exact 覆盖，仍带 c̄，不能宣称无 c̄。Δx 二值差 `‖Δx‖₂≤√υe·d` 不受 c̄ 影响（x 走 binary + range 路径）。单次 s₂ 无 c̄ ≠ 递归无 c̄（docs/15 边界）。
 
 ### 3.3 binding：原始 / 辅助 / 组合矩阵三种，不能混为一谈
 
@@ -175,7 +188,7 @@ accepting transcript
 ```
 A₁Δs₁ + A₂Δs₂ = 0,        BΔs₂ + Δm = 0
 ```
-m 是无限制消息，Δm 可吸收 BΔs₂ → 第二式对 s₂ **不施加**短约束；binding 只来自第一式，即短向量 `(Δs₁,Δs₂)` 落在 `[A₁ A₂]` 的核：需 `MSIS_{n, m₁+m₂, 2β_s}` 成立。s₂ 唯一 ⇒ m=t_B−Bs₂ 唯一。
+m 是无限制消息，Δm 可吸收 BΔs₂ → 第二式对 s₂ **不施加**短约束；binding 只来自第一式，即短向量 `(Δs₁,Δs₂)` 落在 `[A₁ A₂]` 的核：需 `MSIS_{n, m₁+m₂, B}` 成立，其中 B 按 c̄-scaled 提取界取值（relaxed 分量用 `8η·s_i√(2m_i d)`，exact 覆盖的 s₂ 可用 β；**不用未证的 2β_s**，见 §3.2 LB-05S 修正与 docs/19 §3.5）。s₂ 唯一 ⇒ m=t_B−Bs₂ 唯一。
 
 **(b) 辅助承诺 binding**（B1，MSIS on [A'_s A'_x A'_r]）：
 若 (s₂,x,r,m')、(s'₂,x',r',m'') 同为 t'_A,t'_B 的 opening，则
