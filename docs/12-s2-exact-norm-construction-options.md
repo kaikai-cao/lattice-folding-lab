@@ -3,6 +3,8 @@
 > LB-03 · 任务 B / C / E。日期：2026-11-20。
 > 依赖：`docs/11-s2-anchoring-mathematical-audit.md`（anchoring 审计）、LB-02 `docs/08`。
 > 一手来源：LBF 全文镜像 `C:/Users/dell/AppData/Local/Temp/lbf/paper_mirror.txt`（行号 `L####`）；LNP22 正文 `C:/Users/dell/AppData/Local/Temp/lb02/md_lnp22_asia/content.md`（行号 `LNP L####`）。镜像排版注同 `docs/11` §0。
+>
+> **LB-04 重要更新（2026-11-20）**：本文方案 B（anchoring + 就地追加 exact）曾被列为"最小缺口、作者方向"，但 LB-04 的严格映射分析（`docs/14`）证明：`C=[A₂;B]` 是 `(n+ℓ)×m₂` 宽矩阵（`m₂>n+ℓ`，由 hiding 要求），**不存在公开左逆 `PC=I`**；anchoring 只覆盖 `Bs₂` 的**标量常数项线性泛函**，不足以恢复或约束完整 `s₂`；且 LBF §2.1 明确消息在 BDLOP 槽、s₂ 恒为盐，与 LNP22"把目标放 Ajtai 消息槽"的标准做法相反。因此方案 B 的映射在现有承诺布局下**不成立**，LB-04 决策为 C（退回 HOLD）。本文方案 B 的比较表保留为历史记录，结论以 `docs/14`/`decisions/LB-04-decision.md` 为准。
 
 ---
 

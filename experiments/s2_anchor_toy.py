@@ -5,8 +5,10 @@ it does NOT prove Module-SIS hardness, does NOT implement ABDLOP with Gaussian
 salts / rejection sampling, does NOT give any exact-ell_2 norm certificate, and
 does NOT implement the LatticeBlindFold anchoring proof of knowledge (Pi_anc).
 
-What it DOES verify, over a small prime field F_p with ell=1 (so ct = constant
-coefficient = the single coordinate):
+What it DOES verify, over a small prime field F_p with ell=2 (two BDLOP message
+slots; iota(n) selects the row/coordinate, and ct is the constant coefficient
+of that selected row's ring element -- here every row is a length-2 coefficient
+vector, so selecting iota picks a single coordinate):
 
   ABDLOP commitment (LBF eq. 2.5):  t_A = A1*s1 + A2*s2,  t_B = B*s2 + m  (mod q)
   Lemma 3.10 substitution:  B*s2 = t_B - m, hence for public weights w_n and
@@ -90,10 +92,10 @@ def anchoring_identity(
 
 
 def run_demo():
-    # Two ABDLOP commitments with shared B, ell = 1 (so ct is the single coordinate).
+    # Two ABDLOP commitments with shared B, ell = 2 (len(m) = 2 = number of B rows).
     A1 = [[1, 2], [3, 1]]  # 2 x 2
     A2 = [[2, 1], [1, 4]]  # 2 x 2
-    B = [[1, 3], [2, 1]]   # ell=2 rows would need len(m)=2; use ell=2
+    B = [[1, 3], [2, 1]]   # 2 rows = ell, so iota in {0,1} selects a message slot
     # Use ell = len(m) = 2; row index iota in {0,1}.
     s1_list = [[2, 1], [3, 2]]
     s2_list = [[1, 2], [2, 1]]
