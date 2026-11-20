@@ -15,7 +15,7 @@
 1. **LNP22 §5.2 确实已经有紧的 exact-ℓ₂ 证明**，不能把“发明 exact-ℓ₂ 证书”列为 LB-02 或后续研究贡献。它把内积写成环上多项式乘积的常数项，用二进制余量表示 `β²−‖e‖²`，再用近似 ℓ∞ 范围证明把 mod q 等式提升到整数，最终给出 `‖E_i s−v_i‖₂≤β_i^{(e)}` 的 tight bound（LNP22 §5.2，Eq. (53)(59)(60)，Theorem 5.3）。
 2. **它不能被直接套到 LBF 上当成现成 Decider**。核心原因不是 LNP22 证书不存在，而是：
    - LBF 的承诺把消息放在 BDLOP 槽、两个小向量都作为盐；LNP22 的 exact norm machinery 主要证明承诺部分 `s=(s₁,m)` 及其自同构表示，而 LBF 递归缺口还必须精确认证 BDLOP randomness `s₂`（LBF Remark 4.8 原话：`s₂ (untouched by [LNP22]'s norm machinery, which targets the committed part (s₁,m))`）。
-   - LBF 使用 `K=F_{q²}` 的 component-wise ABDLOP；LNP22 的 automorphism 恒等式依赖 `R_q=Z_q[X]/(X^d+1)` 上的 `σ(X)=X^{−1}`。对 `x=a+bY∈R_K`，LBF 的范数是 `‖a‖²+‖b‖²`，而 K 层自同构会给出 `‖a‖²+ν‖b‖²`；`ν≠1` 时不能直接复用（LBF §3.3.4；LB-01 `docs/05` C4.4）。
+   - LBF 使用 `K=F_{q²}` 的 component-wise ABDLOP；LNP22 的 automorphism 恒等式依赖 `R_q=Z_q[X]/(X^d+1)` 上的 `σ(X)=X^{−1}`。对 `x=a+bY∈R_K`，LBF 的范数是 `‖a‖²+‖b‖²`，而 K 层自同构会给出 `‖a‖²+ν‖b‖²`；`ν≠1` 时不能直接套 K 层恒等式（LBF §3.3.4；LB-01 `docs/05` C4.4）。**LB-03 修订**：这不代表 R_K 上无法做 exact-ℓ₂——LBF §3.3.4 已给出正确翻译：对 a、b 分别在 base-ring 用 `σ⁻¹(a)a=‖a‖²` 证明，再联合约束 `‖a‖²+‖b‖²≤β²`，无需新协议机制。
    - Decider 要验证的是 `CE_com^k` 的 k 个承诺求值声明 + `N_PoK` 份 ABDLOP 转录；exact-ℓ₂ 只覆盖其中范数子句，不覆盖求值、承诺同态、盐替换、知识可靠性拼接与递归接口。
 3. 因此兼容性分类为：**需要参数或格式调整，且部分子问题需要新的协议构造；不是“可直接使用”，也不是“数学上不兼容”。**
 
@@ -256,7 +256,7 @@ n·d·(⌈log q⌉−D) + 2.25·n·d
 |---|---|---|---|
 | `m`（BDLOP 消息，任意范数） | evaluation hint `y'_{i,j}` / mask message | 部分 | LBF 消息放 BDLOP 槽，语义一致；但 LBF 在 `R_K` 上按 component-wise 展开 |
 | `s₁`（Ajtai 消息/短向量） | LBF 盐 `s₁`（也被 LBF 称 salt） | 形式相似，语义不同 | LNP22 的 exact machinery 针对 `(s₁,m)`；LBF 需要两个盐都受控 |
-| `s₂`（承诺 randomness） | LBF 盐 `s₂` | **不能** | LBF Remark 4.8 明确说 LNP22 norm machinery 未触及 `s₂`；需 §3.2.1.1 anchoring |
+| `s₂`（承诺 randomness） | LBF 盐 `s₂` | **不能直接用；但有组合路径** | LNP22 exact 对象向量 `s=(s₁,σ(s₁),m,σ(m))` 不含 s₂，s₂ 仅有 relaxed 界 `‖c̄s₂‖₂≤β_rlx`（Fig10 caption (ii)）；LBF Remark 4.8 sketch 了经 §3.2.1.1 anchoring（`Bs₂=t_B−m`）触及 s₂ 的路径，但未实例化。详见 LB-03 `docs/11`/`docs/12` |
 | `σ(s₁),σ(m)` | LBF base-ring automorphism | 条件兼容 | 仅对 `R_F=Z_q[X]/(X^d+1)` 成立；`R_K` 层不能直接用 |
 | `E_i s−v_i` | 对盐/witness 的范数检查残差 | 需重建 | LBF 盐界是 `ℓ∞<B̃=2`，需转换为 ℓ₂ 界并指定 `E_i,v_i,β_i` |
 | `x_i` | `β²−‖E_i s−v_i‖²` 的二进制余量 | 可嵌入但需提前承诺 | 若不能与 `(s₁,m)` 同时承诺，需放 BDLOP 分槽 |
@@ -272,9 +272,9 @@ n·d·(⌈log q⌉−D) + 2.25·n·d
 
 #### A4.2 LBF 两个随机盐能否直接映射到 LNP22 的承诺消息？
 
-`[论文事实: LBF Remark 4.8, p.47]` **不能。** LBF 的 exact 缺口有两个位置：Π′DEC Step 5 的输出盐、Protocol 7 Step 17 的 mask 盐。原文明确说 exact proof 通过 §3.2.1.1 anchoring 才能 reaches `s₂`，而 LNP22 machinery targets `(s₁,m)`。LBF 中 `s₁,s₂` 都小、都参与 binding；LNP22 中只有 `s₂` 是 randomness，exact proof 的主对象是 `(s₁,m)`。
+`[论文事实: LBF Remark 4.8, p.47]` **不能直接用；但并非无构造。** LBF 的 exact 缺口有两个位置：Π′DEC Step 5 的输出盐、Protocol 7 Step 17 的 mask 盐。原文明确说 LNP22 machinery targets `(s₁,m)`、s₂ untouched，**但紧接着给出组合方案**：exact proof (§5.2 + §3.3.4 R_K 翻译) "reaches the BDLOP randomness s₂ ... through the anchoring instantiation of §3.2.1.1"，并给出两个 append 界与位置（Remark 4.8 末段）。语气是虚拟式 "One would append it"，且作者在 §1(6)/§4.3.3/§5(2) 一致声明 "we do not instantiate"。因此正确表述是：**组合路径已 sketch，缺的是实例化与安全证明，不是从零发明 anchoring 或 exact 范数机制。**
 
-**分类：需要新的协议构造（anchoring + 两组盐的 exact bound）。**
+**分类（LB-03 修订）：需要参数/格式调整 + 把已有 sketch 装配为完整协议并证明无 c̄ 累积；比 LB-02 原判"需要全新协议构造"更乐观，但未达"可直接使用"。** 详见 `docs/11` §0/§3.1 与 `docs/12` §1–§2。
 
 #### A4.3 component-wise commitment 能否满足 LNP22 要求？
 
@@ -321,9 +321,9 @@ n·d·(⌈log q⌉−D) + 2.25·n·d
 
 | 候选分类 | 结论 | 理由 |
 |---|---|---|
-| 可直接使用 | ❌ | LNP22 不覆盖 `s₂`、不覆盖 LBF 输出求值关系、`R_K` component-wise 需改写 |
+| 可直接使用 | ❌ | LNP22 exact 对象向量不含 `s₂`、不覆盖 LBF 输出求值关系、`R_K` component-wise 需按 §3.3.4 翻译 |
 | 需要参数或格式调整 | ✅ | ABDLOP 槽位、消息维度、`ℓ∞→ℓ₂` 转换、q/β/challenge 条件均需重设 |
-| 需要新的协议构造 | ✅ | `s₂` anchoring、两组盐的 exact bound、与 `CE_com^k` Decider 的安全拼接尚无现成协议 |
+| 需要新的协议构造 | ◑ **收窄** | LB-03 修订：`s₂` anchoring（§3.2.1.1 Lemma 3.10）与 R_K exact 翻译（§3.3.4）**均已存在且被作者 sketch 组合**（Remark 4.8），故不是"从零发明"；真正缺的是把 sketch **实例化**成每隔轮协议 + 证明"无 c̄ 累积"+ 与 `CE_com^k` Decider 的安全拼接。详见 `docs/11`/`docs/12`。 |
 | 不兼容 | ❌ | 基础环、ABDLOP 线性形式、binary/inner-product machinery 可复用 |
 
 ---

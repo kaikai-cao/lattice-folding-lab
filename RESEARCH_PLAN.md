@@ -10,6 +10,8 @@
 
 > **LB-02 更新（2026-11-20）**：LNP22 已有 tight exact-ℓ₂ 证书，不能再把“发明 exact-ℓ₂ 证明”作为题目。当前待验证命题收窄为：能否把该证书嵌入 LBF 特定的 component-wise ABDLOP 承诺结构、覆盖两个盐（尤其 `s₂`）并把 `CE_com^k` 编译为可简洁验证且保持 ZK/知识可靠的关系。原 Decider 目标仍是最终目标，但当前阻断是嵌入与拼接，而非范数证明本身。
 
+> **LB-03 更新（2026-11-20）**：s₂ 缺口进一步收敛——LBF §3.2.1.1 的 anchoring（salt/message substitution）与 §3.3.4 的 R_K component-wise exact-ℓ₂ 翻译**均已存在**，Remark 4.8 还 sketch 了二者组合触及 `s₂` 的路径，但明确 "we do not instantiate"。决策为 **B**：待攻克的不是"发明 anchoring 或范数证明"，而是把 sketch 实例化为每隔轮协议、证明提取无 c̄ 累积、验算 component-wise 联合参数与成本。研究问题相应收窄为"s₂ exact-norm 证书的组装与安全拼接"，Decider 关系编译器（docs/13）在该局部缺口关闭前保持"待定义"。
+
 ## 2. 研究问题（待验证）
 
 给定格基 Folding 产生的盲化承诺求值声明，研究是否能够构造一个 Decider，使其：
