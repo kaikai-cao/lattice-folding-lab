@@ -1,7 +1,7 @@
-# D-LB-06 · Theorem 5.3 忠实实例化与 B2 参数可行性 · 决策（LB-06R 定点回修）
+# D-LB-06 · Theorem 5.3 忠实实例化与 B2 参数可行性 · 决策（LB-06R + LB-06R2 定点回修）
 
-> 日期：2026-11-20。任务包：LB-06（基线 `401f956`）→ **LB-06R 定点回修（基线 `0fd0c48`）**。
-> **决策：B2-PARAM-HOLD（维持）** —— LB-06R 已把提取、维度、参数与 binding 账本修到前后一致，五处数学问题与时间符号均已定点处理；但论文 ε 条件内部不一致、Extended-MLWE 新实例 hardness、`B̃`/β 口径与时间符号仍阻断，故仍不是 CANDIDATE，也没有结构性矛盾到 B2-HOLD。
+> 日期：2026-11-20。任务包：LB-06（基线 `401f956`）→ LB-06R 定点回修（基线 `0fd0c48`）→ **LB-06R2 C2 公式定点纠正（基线 `5f280e2`）**。
+> **决策：B2-PARAM-HOLD（维持）** —— LB-06R 已把提取、维度、参数与 binding 账本修到前后一致，五处数学问题与时间符号均已定点处理；**LB-06R2 只纠正一处 C2 根号范围误记（d 应在根号内），不改变 HOLD 判断**；但论文 ε 条件内部不一致、Extended-MLWE 新实例 hardness、`B̃`/β 口径与时间符号仍阻断，故仍不是 CANDIDATE，也没有结构性矛盾到 B2-HOLD。
 
 ## 1. LB-06R 定点回修逐项结论（A–F）
 
@@ -13,9 +13,9 @@
 | A4 时间符号核对 | **完成** | 陈述 `2T_{E_eval}`、正文 "2×E₁"、结论 `2T_{E′}`（视觉）/ OCR `2T_{E1}` 三处并列，**不做等号替换**（docs/20 §1.5-A4） |
 | B 承诺实例映射 n_Thm | **完成** | n_Thm=n′、m₁,Thm=M_Ajtai、ℓ_Thm=ℓ′、m₂,Thm=m₂′、秘密 r；完整 Extended-MLWE 重写；hiding 与 binding 分开（docs/22 §E1B） |
 | C Ajtai 总维度 | **完成** | M_base=m₁+m₂；ν_x=υ_e（当 `2logβ≤d`）；M_Ajtai=M_base+ν_x；k_bin=0 不占列的条件说明；统一维度表（docs/22 §E1C） |
-| D c^(e) 与 C1/C2/C3 | **完成** | 原文 `c^(e)=d(k_bin+Σ(p_i+1))` 代入 `dυ_e(m₂+1)`；C2 按视觉改为 `√(υ_e+k_bin)·d`（d 在根号外）；与 C2 关系数分开（docs/22 §E1D/E2b） |
+| D c^(e) 与 C1/C2/C3 | **完成（LB-06R2 纠错）** | 原文 `c^(e)=d(k_bin+Σ(p_i+1))` 代入 `dυ_e(m₂+1)`；C2 正确式为 `√((υ_e+k_bin)d)`（**d 在根号内**），B2 代入 `√((k+2)td)`；LB-06R 的"d 在根号外"误记已撤回；与 C2 关系数分开（docs/22 §E1D/E2b） |
 | E B_aux 补 s₂ exact 项 | **完成** | `B_{s₂,exact}=2β‖M_d̄M_d̄′‖≤8η²β`，B_aux 改四项平方和；d̄,d̄′ 来自辅助转录；三层 binding 表同步（docs/21 §1.3b'/§1.4/§2.4） |
-| F 决策与日志 | **完成** | 本文件 + docs/20–22 + logs/2026-11-20-session-11.md |
+| F 决策与日志 | **完成** | 本文件 + docs/20–22 + logs/2026-11-20-session-11.md；LB-06R2 纠错另记 session-12 |
 
 ## 2. 为何仍为 PARAM-HOLD（而非 CANDIDATE / B2-HOLD）
 
@@ -38,10 +38,10 @@
 
 ## 4. 与历史决策链的关系
 
-- LB-05 → 条件 B；LB-05R → B2 候选路线；LB-05S → B2-READY；LB-05T → B2-PROOF-PASS；LB-06 → B2-PARAM-HOLD；**LB-06R → B2-PARAM-HOLD（维持，账本已修）**。
+- LB-05 → 条件 B；LB-05R → B2 候选路线；LB-05S → B2-READY；LB-05T → B2-PROOF-PASS；LB-06 → B2-PARAM-HOLD；LB-06R → B2-PARAM-HOLD（维持，账本已修）；**LB-06R2 → B2-PARAM-HOLD（维持，仅纠正 C2 根号范围）**。
 - 本轮**不推翻** LB-05T 的结构结论与 LB-06 的 HOLD 判断；只修正本轮交付内部的公式/维度/概率不一致。未改 B2 原始关系 L1–L5，未改 experiments/、tests/、历史决策文件与原文。
 
 ## 5. 禁令（延续并新增）
 
 不宣称 128-bit / 完整安全证明 / 已实例化 / 已实现 / 递归无 c̄；不把 exact β 当无放大 MSIS 界；不混用 c̄c̄′ 复合 4η² 与原文拆项 8η；不把 exact 余量 x_i 等同 Eq.(54) 二值约束；不把"符号级可行域非空"写成"参数已定型"；不做 Decider/LaZer。
-**新增**：不写"以证明页为准所以 ε 条件已解决"；不写 `T_{E_eval}=T_{E₁}`；不把 C2 的 `√(υ_e+k_bin)·d`（d 在根号外）写成 `√((υ_e+k_bin)d)`；不把 `Σp_i` 代入 C2；不含 s₂ exact 项的 B_aux 不得使用。
+**新增**：不写"以证明页为准所以 ε 条件已解决"；不写 `T_{E_eval}=T_{E₁}`；**C2 必须写 `√((υ_e+k_bin)d)`（d 在根号内），禁止写回 `√(υ_e+k_bin)·d`**（LB-06R2 纠错）；不把 `Σp_i` 代入 C2；不含 s₂ exact 项的 B_aux 不得使用。
