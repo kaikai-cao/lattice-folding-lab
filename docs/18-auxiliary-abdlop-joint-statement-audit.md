@@ -2,6 +2,8 @@
 
 > **★LB-05S 修订说明（2026-11-20）**：用户对照 LNP22 官方 PDF 第 42–43 页发现本文 §2.2 有一处**变量定义错误**——`ŝ₁=(s₁,s₂,x)` 后又定义 `s_full=(ŝ₁,σ(ŝ₁),m̂,σ(m̂))`，把 x 和 σ(x) 塞进了 exact-norm 向量，与 Figure 10 的 s=(s₁,σ(s₁),m,σ(m))（不含 x、无 σ(x)）不一致。本轮修正：s_A=(s₁,s₂)、s_LNP=(s_A,σ(s_A),m_A,σ(m_A)) 不含 x，E_{s₂}∈R_q^{m₂×2(m₁+m₂+ℓ)}（不含 x 列）；并收紧两处安全论证（Extended-MLWE hiding 不能用 m₂'>n'；MSIS 差向量不能用未证 ‖Δs‖≤2β，须用 c̄-scaled 界）。**完整修正分析见 `docs/19-b2-exact-statement-and-security-audit.md`**。以下 §2.2、§3.2、§3.3(c) 已就地修正，其余为 LB-05R 原始记录，最终以 docs/19 为准。
 >
+> **★LB-05T 补充修订（2026-11-20）**：§3.2 末尾"被 exact 覆盖可取 exact β"过强——binding 双 opening 差仍带 c̄c̄′ 放大（`2β‖M_c̄M_c̄′‖≤8η²β`），已就地纠正；联合提取器结构继承与三层 binding 归约见 `docs/20`/`docs/21`。
+>
 > LB-05R · 任务 A / B / C / D / E。日期：2026-11-20。
 > 基线：`docs/16`（路线 A 否证）、`docs/17`（路线 B 初稿）、`decisions/LB-05-decision.md`（条件性 B）。
 > 本轮只补齐 LB-05 的三个数学缺口，不扩大到 Decider、不做 LaZer 集成。
@@ -177,7 +179,7 @@ binding 用的差向量界（乘 c̄c̄' 清分母, L511–521）:
 exact 覆盖的 s₂（B2 的 (L4)(L5)）:
    ‖s̄₂‖₂ ≤ β  无 c̄   ← exact 核心收益，但仅覆盖被 exact 关系作用的 s₂
 ```
-`[推导]` 因此 MSIS 界 B 的取值依据**不是**未证的 `2β_s`，而是：若对应分量只走 relaxed 提取，B 取 c̄-scaled 上界 `8η√(…)`；若该分量被 exact 覆盖（B2 的 s₂），可取 exact β。s₁、r 未被 exact 覆盖，仍带 c̄，不能宣称无 c̄。Δx 二值差 `‖Δx‖₂≤√υe·d` 不受 c̄ 影响（x 走 binary + range 路径）。单次 s₂ 无 c̄ ≠ 递归无 c̄（docs/15 边界）。
+`[推导 · ★LB-05T 纠正]` 因此 MSIS 界 B 的取值依据**不是**未证的 `2β_s`，而是：若对应分量只走 relaxed 提取，B 取 c̄-scaled 上界 `8η√(…)`；**若该分量被 exact 覆盖（B2 的 s₂），也不能取裸 β**——`‖s̄₂‖≤β` 是单 opening 谓词，binding 双 opening 差仍带 c̄c̄′ 放大，该项界为 `2β‖M_c̄M_c̄′‖_{2→2}≤8η²β`。s₁、r 未被 exact 覆盖，仍带 c̄。Δx 二值差本文按 `‖Δx‖₂≤√υe·d` 保守计（strict 路径下亦乘挑战差，见 docs/21 §1.3(c)）。单次 s₂ 无 c̄ ≠ 递归无 c̄（docs/15 边界）。完整混合界与三层 binding 见 docs/21。
 
 ### 3.3 binding：原始 / 辅助 / 组合矩阵三种，不能混为一谈
 

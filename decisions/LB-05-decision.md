@@ -1,5 +1,7 @@
 # D-LB-05 · 辅助承诺能否闭合 s₂ 范数问题 · 决策
 
+> **★当前决策见 `decisions/LB-05T-decision.md`（2026-11-20）**：LB-05T 给出联合提取器（Thm5.3 参数化实例，docs/20）与混合 MSIS 界 + 三层 binding 归约（docs/21），决策升级为 **B2-PROOF-PASS**（严格限定：结构/归约层严谨、参数层未做、非完整安全证明）。本文件保留 LB-05→05R→05S 的历史决策链。
+>
 > **★LB-05S 决策更新（2026-11-20）**：用户对照 LNP22 官方 PDF 第 42–43 页，发现 docs/18 的 B2 变量定义错误（把 x/σ(x) 塞进 exact 向量 s），并要求收紧两处安全论证（Extended-MLWE hiding、MSIS c̄-scaled 界）。本轮审计（`docs/19-b2-exact-statement-and-security-audit.md`）后，决策由"B2 候选路线"升级为 **B2-READY**：
 > - **B2-READY**：B2 的关系（L1–L5）、变量角色（s_A=(s₁,s₂)，s_LNP 不含 x、无 σ(x)，E_{s₂}∈R_q^{m₂×2(m₁+m₂+ℓ)}）、PoK 接口（结构层命中 Eq.6/Ajtai 追加 x/任意 E_i/σ/二值余量）与必要参数条件（形式层：Extended-MLWE 层级、MSIS c̄-scaled 界、Thm5.3 q 条件）已明确，**可进入更深入的安全证明**。
 > - **不是安全结论**：READY ≠ 已证明知识可靠、≠ 已实例化、≠ 已实现、≠ 递归无 c̄ 累积。进入安全证明前须完成 docs/19 §5 的四项准入清单（联合提取器、E_{s₂} 扩展维度接口、Thm5.3 参数重推、c̄-scaled binding），任一发现结构性矛盾即退回 B2-HOLD。

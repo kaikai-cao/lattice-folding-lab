@@ -81,7 +81,7 @@ m₂' > n'+ℓ'+1                     （commit-and-prove，+1 来自 b^T / Rej2
 m₂' > n'+ℓ'+λ'+1  ... > n'+ℓ'+λ'+2(256/d'+1)   （Thm5.3 exact 层，+ 附加承诺与 masking）
 ```
 `m₂'>n'` 不成立为充分条件；n',ℓ',m₂',λ' 未选，`[待核查]` 具体下界不补造数字。这是**新增的维度约束**。
-`[推导]` **binding 约束（LB-05R 收紧，LB-05S 再收紧）**：A'_1(s₂,x)+A'_r r=t'_A 的短 opening 唯一性不是无条件成立，而是需 `MSIS_{n', m₂+υe+m₂', B}` 假设（给定矩阵分布、维度、短界 B）。★B 的取值**不是** `2β_s`（未证的 exact 界）：LNP22 提取界是 c̄-scaled（`‖s̄_i c̄‖≤2s_i√(2m_i d)`，Lemma 3.1），binding 论证乘 c̄c̄' 清分母后界为 `8η·s_i√(2m_i d)`；仅被 exact 关系覆盖的分量（B2 的 s₂）可取 exact β。差向量范数与原始/辅助两层 binding 区别见 docs/18 §3.2–3.3、docs/19 §3.5。
+`[推导]` **binding 约束（LB-05R 收紧，LB-05S 再收紧，LB-05T 三收紧）**：A'_1(s₂,x)+A'_r r=t'_A 的短 opening 唯一性不是无条件成立，而是需 `MSIS_{n', m₂+υe+m₂', B}` 假设（给定矩阵分布、维度、短界 B）。★B 的取值**不是** `2β_s`（未证的 exact 界）：LNP22 提取界是 c̄-scaled（`‖s̄_i c̄‖≤2s_i√(2m_i d)`，Lemma 3.1），binding 论证乘 c̄c̄' 清分母后界为 `8η·s_i√(2m_i d)`。**★LB-05T 纠正**："被 exact 覆盖的分量（B2 的 s₂）可取 exact β"过强——`‖s̄₂‖≤β` 是**单 opening 谓词**，binding 双 opening 差仍带 c̄c̄′ 放大，该项界为 `2β‖M_c̄M_c̄′‖_{2→2}≤8η²β`（非裸 β）。完整混合界见 docs/21 §1；差向量范数与三层 binding 见 docs/18 §3.2–3.3、docs/19 §3.5、docs/21 §2。
 
 ### 1.4 与 LNP22 原文机制的对应（★LB-05R 降级为"相关组件与设计先例"）
 
