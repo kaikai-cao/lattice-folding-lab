@@ -2,7 +2,7 @@
 
 > LB-04 · 任务 A/B/C。日期：2026-11-20。
 > 核心问题：能否把 LBF 的 `s₂` 写成 LNP22 exact-ℓ₂ 可直接处理的、已承诺消息向量的线性函数 `s₂ = E x − v`？用户提出的候选路线是找公开 `P` 使 `PC=I`，`C=[A₂;B]`。
-> **结论先行：候选路线 `PC=I` 在维度与 hiding 两个层面都不成立；真实可行的替代是 LNP22 的标准做法——用单独的 ABDLOP 把目标向量放进消息槽再证 exact norm。但这一步在 LBF 中尚未实例化，且"新承诺的 s₂"与"原承诺的 s₂"是否同一仍是未闭合缺口。**
+> **结论先行：候选路线 `PC=I` 由维度/基数关系直接判定不成立（此证明已足够，不再依赖 hiding 推断）；真实可行的替代是 LNP22 的标准做法——用单独的 ABDLOP 把目标向量放进消息槽再证 exact norm。但这一步在 LBF 中尚未实例化，且"新承诺的 s₂"与"原承诺的 s₂"是否同一仍是未闭合缺口。**
 >
 > 来源标注：ePrint 官方 PDF `eprint.iacr.org/2022/284.pdf` 本轮仍被 Cloudflare 阻挡（WebFetch 仅返回 "Just a moment..."），本机缺 `fitz`、截图渲染命令被安全策略拦截。故本文所有原文引用来自 **ePrint 镜像 PDF** `C:/Users/dell/AppData/Local/Temp/lb02/lnp22_asia.pdf` 经 `workbuddy-pdf` 提取的 `md_lnp22_asia/content.md`（3453 行，行号记 `LNP L####`），以及 LBF 全文镜像 `C:/Users/dell/AppData/Local/Temp/lbf/paper_mirror.txt`（行号记 `LBF L####`）。**镜像不是已核验的官方 PDF 版本**；关键数值用多处独立参数表交叉验证，但不冒充官方 PDF 逐页核对。
 
@@ -76,9 +76,15 @@ J = [A₁ 0 ; 0 I_ℓ] ∈ R_q^{(n+ℓ)×(m₁+ℓ)}
 
 **结论 B1**：`C=[A₂;B]` 是宽矩阵（列多于行），`ker(C)` 非平凡（维数 ≥ m₂−(n+ℓ)>0），`C` 不是单射，**不存在公开左逆 P 使 PC=I**。用户候选式 `PC=I ⇒ s₂ = P[t_A;t_B]−PJx = Ex−v` 的起点不成立。
 
-### 2.3 这是 hiding 的直接后果，不是参数不幸
+### 2.3 与 hiding 的关系（论证收紧，不作为主证明）
 
-`[推导]` 更重要的结构性结论：**`PC=I` 不存在恰恰是 ABDLOP hiding 的必要条件**。若存在公开可算的 P 使 `s₂ = P[t_A;t_B] − PJx`，则任何持有公开承诺 `(t_A,t_B)` 与消息 x 的验证者都能线性解出随机盐 s₂——这直接摧毁 Extended-MLWE hiding（攻击者无需区分 `Cs₂` 与均匀：给定承诺即可反解）。因此"从承诺线性恢复完整 s₂"在 hiding 的承诺方案中**原则上不可能**，与具体矩阵无关。这也是 §B4 所问"是否存在基于 anchoring 的替代映射"的根本约束：**任何能从公开承诺恢复完整 s₂ 的映射都违反 hiding**。
+`[复核修订: LB-05]` 本节原先写"若 `PC=I` 成立，任何人可从公开承诺解出 s₂，直接摧毁 hiding"。**该说法过强，本阶段撤回，不作为结论依据。** 理由：候选式为 `s₂ = P[t_A;t_B] − PJx`，其中 `x=[s₁;m]`、`J=[A₁ 0; 0 I_ℓ]`，故 `PJx = P[A₁s₁; m]`。公开承诺 `(t_A,t_B)` 中仍含未知的 `s₁`（秘密盐）与 `m`（消息）；即使假设 `PC=I` 存在，攻击者也必须先知道 `A₁s₁`（或 `s₁`）才能计算 `PJx` 并解出 s₂。因此"仅凭 `PC=I` 即可从公开承诺直接恢复 s₂"不成立，更不能据此断言 hiding 被摧毁。
+
+`[推导]` 正确的结构性关系是（与主证明一致的**间接**联系，非直接推断）：ABDLOP 的 hiding 要求 `Cs₂ = (A₂;B)s₂` 与均匀不可区分（Extended-MLWE，LNP L474–478），这要求 s₂ 的自由度超过公开像维度，即 `m₂ > n+ℓ`（§1.3）；而 `m₂ > n+ℓ` 正是使 `C` 成为宽矩阵、`PC=I` 不存在的直接原因。所以：
+
+- `PC=I` 不存在的**主证明是维度/基数关系（§2.1–2.2），已完全足够**；
+- hiding 只是解释"为什么参数必然取 `m₂ > n+ℓ`"，从而**间接**导致左逆不存在；
+- 不再使用"从承诺反解 s₂ 摧毁 hiding"作为论证步骤——该步骤既非必要，按上式也不严格成立。
 
 ### 2.4 部分线性像是否可行？
 
@@ -115,7 +121,7 @@ J = [A₁ 0 ; 0 I_ℓ] ∈ R_q^{(n+ℓ)×(m₁+ℓ)}
 - **群签名**（LNP L185）：`the user commits to s1, s2, r, μ in the "Ajtai" part of the ABDLOP commitment (5). He then proves that the norms of s1, s2, r are small` ——这里 s₂（原本是 randomness 的符号）被**作为消息承诺到 Ajtai 槽**后再证范数。
 - **可验证加密**（LNP L2081, Remark 6.2）：`since we commit to r and m using a separate ABDLOP commitment, we circumvent the relaxation factor by proving exact norms on r and m` ——**用单独的 ABDLOP 承诺 r、m 作为消息，从而绕开 relaxation factor c̄**。
 
-`[推导]` 这三条铁证说明：LNP22 处理"对某随机向量证紧范数"的**唯一展示机制**是把它提升为消息（通常在额外承诺里），而非从 randomness 槽的承诺线性恢复。这与 §2.3 的结构性结论一致。
+`[推导]` 这三条铁证说明：LNP22 处理"对某随机向量证紧范数"的**唯一展示机制**是把它提升为消息（通常在额外承诺里），而非从 randomness 槽的承诺线性恢复。这与 §2.1–2.2 的维度结论（左逆不存在）一致；关于 hiding 的表述已按 LB-05 复核收紧（§2.3），不作为此结论的论据。
 
 ### 3.2 LBF Remark 4.8 sketch 的定位
 
@@ -131,7 +137,7 @@ J = [A₁ 0 ; 0 I_ℓ] ∈ R_q^{(n+ℓ)×(m₁+ℓ)}
 
 `[推导]` 但 §2.4 已证明：anchoring 只给 `Bs₂` 的**标量常数项聚合**绑定（`ct(ΣwₙBs₂)` 一个 K 元素），**不足以把 m₂ 维的新承诺 s₂ 与原承诺 s₂ 识别为同一向量**。要在两个承诺间识别同一 s₂，需要 m₂ 个线性无关约束（或足以确定 s₂ 的 binding 论证），而现有 anchoring 带宽不够。因此：
 
-- **候选式 PC=I**：失败（维度 + hiding，§2.2/2.3）；
+- **候选式 PC=I**：失败（维度/基数关系，§2.1–2.2；hiding 表述已收紧见 §2.3）；
 - **anchoring 替代映射**：只覆盖标量线性像，不足以绑定完整 s₂（§2.4）；
 - **LNP22 标准做法（额外承诺消息槽）**：原理可行且是 LNP22 已展示的，但在 LBF 中**未实例化**，且与原承诺的 s₂ 一致性绑定缺 a m₂-维约束。
 
