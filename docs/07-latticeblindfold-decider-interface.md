@@ -153,4 +153,5 @@ Relation CE_com(b,L,B̃,Commit,T,K)^k:  ∀i∈[k]:
 - `[论文事实]` `ε^{LBF-blind}≈2^{−112}` 是具体非零量；不得写成"完美零知识/误差 0"。
 - `[论文事实]` Decider 缺口与 SuperNeo `Π_DEC`、与"知识证明是否已存在"是三个不同问题；不要混为一谈。
 - `[研究假设]` LaBRADOR 候选仅为待验证方向；本阶段未证明其可行性、大小或安全模型兼容性。
-- `[待核查]` `[LNP22, §5.2]` exact-ℓ₂ 证书、`[NS24]` Greyhound、`[NOZ26]` Hachi、`[KLSS23]` Hint-MLWE 均只经 LBF 引用接触，未逐字核原文；下一阶段若采用必须回原文。
+- `[论文事实（LB-02 更新）]` `[LNP22, §5.2]` exact-ℓ₂ 证书已回原文核查，结论与兼容性分类见 `docs/08-exact-l2-certificate-mapping.md`；`[NS24]` Greyhound、`[NOZ26]` Hachi、`[CFW26]` 与 LaBRADOR Toolkit 的针对性排查见 `docs/10-recent-competition-update.md`。
+- `[待核查]` `[KLSS23]` Hint-MLWE 仍只经 LBF 引用接触；若后续采用必须回原文。
